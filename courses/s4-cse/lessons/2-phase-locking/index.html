@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<!-- Mirrored from hippocampus.malabarcet.ac.in/courses/s4-cse/lessons/2-phase-locking/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 19 Oct 2020 13:19:42 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="profile" href="https://gmpg.org/xfn/11">
+<title>S4 CSE  &rarr;  2 Phase Locking &#8211; HippoCampus</title>
+<link rel='dns-prefetch' href='http://fonts.googleapis.com/' />
+<link rel='dns-prefetch' href='http://s.w.org/' />
+<link rel="alternate" type="application/rss+xml" title="HippoCampus &raquo; Feed" href="../../../../feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="HippoCampus &raquo; Comments Feed" href="../../../../comments/feed/index.html" />
+<link rel="alternate" type="application/rss+xml" title="HippoCampus &raquo; S4 CSE Comments Feed" href="../../feed/index.html" />
+<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/hippocampus.malabarcet.ac.in\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.4.2"}};
+			/*! This file is auto-generated */
+			!function(e,a,t){var r,n,o,i,p=a.createElement("canvas"),s=p.getContext&&p.getContext("2d");function c(e,t){var a=String.fromCharCode;s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,e),0,0);var r=p.toDataURL();return s.clearRect(0,0,p.width,p.height),s.fillText(a.apply(this,t),0,0),r===p.toDataURL()}function l(e){if(!s||!s.fillText)return!1;switch(s.textBaseline="top",s.font="600 32px Arial",e){case"flag":return!c([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])&&(!c([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!c([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]));case"emoji":return!c([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340])}return!1}function d(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(i=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},o=0;o<i.length;o++)t.supports[i[o]]=l(i[o]),t.supports.everything=t.supports.everything&&t.supports[i[o]],"flag"!==i[o]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[i[o]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(r=t.source||{}).concatemoji?d(r.concatemoji):r.wpemoji&&r.twemoji&&(d(r.twemoji),d(r.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel='stylesheet' id='wp-block-library-css' href='../../../../wp-includes/css/dist/block-library/style.min7661.css?ver=5.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-block-library-theme-css' href='../../../../wp-includes/css/dist/block-library/theme.min7661.css?ver=5.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wc-block-vendors-style-css' href='../../../../wp-content/plugins/woocommerce/packages/woocommerce-blocks/build/vendors-style653d.css?ver=2.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='wc-block-style-css' href='../../../../wp-content/plugins/woocommerce/packages/woocommerce-blocks/build/style653d.css?ver=2.7.1' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-components-css' href='../../../../wp-includes/css/dist/components/style.min7661.css?ver=5.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-editor-font-css' href='https://fonts.googleapis.com/css?family=Noto+Serif%3A400%2C400i%2C700%2C700i&amp;ver=5.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-block-editor-css' href='../../../../wp-includes/css/dist/block-editor/style.min7661.css?ver=5.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-nux-css' href='../../../../wp-includes/css/dist/nux/style.min7661.css?ver=5.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-editor-css' href='../../../../wp-includes/css/dist/editor/style.min7661.css?ver=5.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='cb-common-css-css' href='../../../../wp-content/plugins/creative-blocks/dist/blocks.style.build7661.css?ver=5.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='font-awesome-css' href='../../../../wp-content/plugins/elementor/assets/lib/font-awesome/css/font-awesome.min1849.css?ver=4.7.0' type='text/css' media='all' />
+<link rel='stylesheet' id='contact-form-7-css' href='../../../../wp-content/plugins/contact-form-7/includes/css/styles5fba.css?ver=5.2' type='text/css' media='all' />
+<link rel='stylesheet' id='jquery-ui-smoothness-css' href='../../../../wp-content/plugins/creative-blocks/vendors/jquery-ui35d0.css?ver=1.12.1' type='text/css' media='all' />
+<link rel='stylesheet' id='ditty-news-ticker-font-css' href='../../../../wp-content/plugins/ditty-news-ticker/inc/static/libs/fontastic/stylesff0d.css?ver=2.2.15' type='text/css' media='all' />
+<link rel='stylesheet' id='ditty-news-ticker-css' href='../../../../wp-content/plugins/ditty-news-ticker/inc/static/css/stylea01a.css?ver=1585583245' type='text/css' media='all' />
+<link rel='stylesheet' id='woocommerce-layout-css' href='../../../../wp-content/plugins/woocommerce/assets/css/woocommerce-layoutb2f9.css?ver=4.3.0' type='text/css' media='all' />
+<style id='woocommerce-layout-inline-css' type='text/css'>
+
+	.infinite-scroll .woocommerce-pagination {
+		display: none;
+	}
+</style>
+<link rel='stylesheet' id='woocommerce-smallscreen-css' href='../../../../wp-content/plugins/woocommerce/assets/css/woocommerce-smallscreenb2f9.css?ver=4.3.0' type='text/css' media='only screen and (max-width: 768px)' />
+<link rel='stylesheet' id='woocommerce-general-css' href='../../../../wp-content/plugins/woocommerce/assets/css/woocommerceb2f9.css?ver=4.3.0' type='text/css' media='all' />
+<style id='woocommerce-inline-inline-css' type='text/css'>
+.woocommerce form .form-row .required { visibility: visible; }
+</style>
+<link rel='stylesheet' id='business-consultr-google-fonts-css' href='http://fonts.googleapis.com/css?family=Poppins:300,400,400i,500,600,700,800,900' type='text/css' media='all' />
+<link rel='stylesheet' id='bootstrap-css' href='../../../../wp-content/themes/business-consultr/assets/vendors/bootstrap/css/bootstrap.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='kfi-icons-css' href='../../../../wp-content/themes/business-consultr/assets/vendors/kf-icons/css/style.css' type='text/css' media='all' />
+<link rel='stylesheet' id='owlcarousel-css' href='../../../../wp-content/themes/business-consultr/assets/vendors/OwlCarousel2-2.2.1/assets/owl.carousel.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='owlcarousel-theme-css' href='../../../../wp-content/themes/business-consultr/assets/vendors/OwlCarousel2-2.2.1/assets/owl.theme.default.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='business-consultr-blocks-css' href='../../../../wp-content/themes/business-consultr/assets/css/blocks.min.css' type='text/css' media='all' />
+<link rel='stylesheet' id='business-consultr-style-css' href='../../../../wp-content/themes/education-consultr/style.css' type='text/css' media='all' />
+<link rel='stylesheet' id='wp-members-css' href='../../../../wp-content/plugins/wp-members/assets/css/forms/generic-no-float.minac69.css?ver=3.3.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='education-consultr-style-parent-css' href='../../../../wp-content/themes/business-consultr/style7661.css?ver=5.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='education-consultr-style-css' href='../../../../wp-content/themes/education-consultr/style8a54.css?ver=1.0.0' type='text/css' media='all' />
+<link rel='stylesheet' id='learn-press-bundle-css' href='../../../../wp-content/plugins/learnpress/assets/css/bundle.min0e74.css?nocache=1603112807.22&amp;ver=3.2.6.7' type='text/css' media='all' />
+<link rel='stylesheet' id='learn-press-css' href='../../../../wp-content/plugins/learnpress/assets/css/learnpress0e74.css?nocache=1603112807.22&amp;ver=3.2.6.7' type='text/css' media='all' />
+<script>window.LP_DEBUG = true;</script>
+<style type="text/css">
+            html, body {
+                overflow: hidden;
+            }
+
+            body {
+                opacity: 0;
+
+            }
+
+            body.course-item-popup #wpadminbar {
+                _display: none;
+            }
+
+            body.course-item-popup #learn-press-course-curriculum {
+                position: fixed;
+                top: 60px;
+                bottom: 0;
+                left: 0;
+                background: #FFF;
+                border-right: 1px solid #DDD;
+                overflow: auto;
+                z-index: 9999;
+            }
+
+            body.course-item-popup #learn-press-content-item {
+                position: fixed;
+                z-index: 9999;
+                background: #FFF;
+                top: 60px;
+                right: 0;
+                bottom: 0;
+                overflow: visible;
+            }
+        </style>
+<script type='text/javascript' src='../../../../wp-includes/js/jquery/jquery4a5f.js?ver=1.12.4-wp'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/jquery/jquery-migrate.min330a.js?ver=1.4.1'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/learnpress/assets/js/vendor/plugins.all0e74.js?nocache=1603112807.22&amp;ver=3.2.6.7'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/underscore.min4511.js?ver=1.8.3'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var userSettings = {"url":"\/","uid":"0","time":"1603112807","secure":"1"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-includes/js/utils.min7661.js?ver=5.4.2'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var lpGlobalSettings = {"url":"https:\/\/hippocampus.malabarcet.ac.in\/courses\/s4-cse\/lessons\/2-phase-locking\/","siteurl":"https:\/\/hippocampus.malabarcet.ac.in","ajax":"https:\/\/hippocampus.malabarcet.ac.in\/wp-admin\/admin-ajax.php","theme":"education-consultr","localize":{"button_ok":"OK","button_cancel":"Cancel","button_yes":"Yes","button_no":"No"}};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-content/plugins/learnpress/assets/js/global0e74.js?nocache=1603112807.22&amp;ver=3.2.6.7'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/learnpress/assets/js/utils0e74.js?nocache=1603112807.22&amp;ver=3.2.6.7'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/learnpress/assets/js/frontend/learnpress0e74.js?nocache=1603112807.22&amp;ver=3.2.6.7'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var lpCheckoutSettings = {"ajaxurl":"https:\/\/hippocampus.malabarcet.ac.in","user_waiting_payment":null,"user_checkout":"","i18n_processing":"Processing","i18n_redirecting":"Redirecting","i18n_invalid_field":"Invalid field","i18n_unknown_error":"Unknown error","i18n_place_order":"Place order"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-content/plugins/learnpress/assets/js/frontend/checkout0e74.js?nocache=1603112807.22&amp;ver=3.2.6.7'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var lpCourseSettings = {"root_url":"https:\/\/hippocampus.malabarcet.ac.in\/","id":835,"url":"https:\/\/hippocampus.malabarcet.ac.in\/courses\/s4-cse\/","result":0,"current_item":"","items":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-content/plugins/learnpress/assets/js/frontend/course0e74.js?nocache=1603112807.22&amp;ver=3.2.6.7'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/learnpress/assets/js/frontend/become-teacher0e74.js?nocache=1603112807.22&amp;ver=3.2.6.7'></script>
+<link rel='https://api.w.org/' href='../../../../wp-json/index.html' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="../../../../xmlrpc0db0.html?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="../../../../wp-includes/wlwmanifest.xml" />
+<link rel='prev' title='S6 CSE' href='../../../s6-cse/index.html' />
+<link rel='next' title='S8 ECE' href='../../../s8-ece/index.html' />
+<meta name="generator" content="WordPress 5.4.2" />
+<meta name="generator" content="WooCommerce 4.3.0" />
+<link rel="canonical" href="../../index.html" />
+<link rel='shortlink' href='../../../../index7a13.html?p=835' />
+<link rel="alternate" type="application/json+oembed" href="../../../../wp-json/oembed/1.0/embedc466.json?url=https%3A%2F%2Fhippocampus.malabarcet.ac.in%2Fcourses%2Fs4-cse%2F" />
+<link rel="alternate" type="text/xml+oembed" href="../../../../wp-json/oembed/1.0/embed0df5?url=https%3A%2F%2Fhippocampus.malabarcet.ac.in%2Fcourses%2Fs4-cse%2F&amp;format=xml" />
+<style type="text/css">
+		.offcanvas-menu-open .kt-offcanvas-overlay {
+		    position: fixed;
+		    width: 100%;
+		    height: 100%;
+		    background: rgba(0, 0, 0, 0.7);
+		    opacity: 1;
+		    z-index: 9;
+		    top: 0px;
+		}
+
+		.kt-offcanvas-overlay {
+		    width: 0;
+		    height: 0;
+		    opacity: 0;
+		    transition: opacity 0.5s;
+		}
+		
+		#primary-nav-container{
+			padding-top: 0px;
+		}
+
+		.masonry-grid.wrap-post-list {
+			width: 100% !important;
+		}
+
+		
+					@media screen and (min-width: 992px){
+				body.home.page .wrap-inner-banner .page-header {
+				    margin-bottom: calc(10% + 150px);
+				}
+			}
+		
+		
+					.site-header {
+				position: relative;
+				top: 0 !important;
+			}
+			.block-slider{
+				margin-top: 0 !important;
+			}
+			.wrap-inner-banner{
+				margin-top: 0 !important;
+			}
+		
+		
+		.block-callback {
+		   background-image: url(../../../../wp-content/themes/business-consultr/assets/images/placeholder/business-consultr-banner-1920-850.jpg);
+		 }
+
+		/*======================================*/
+		/* Site title */
+		/*======================================*/
+		.site-header .site-branding .site-title,
+		.site-header .site-branding .site-title a {
+			color: #10242b;
+		} 
+
+		/*======================================*/
+		/* Tagline title */
+		/*======================================*/
+		.site-header .site-branding .site-description {
+			color: #4d4d4d;
+		}
+
+		/*======================================*/
+		/* Primary color */
+		/*======================================*/
+
+		/*======================================*/
+		/* Background Primary color */
+		/*======================================*/
+		.icon-block-outer:hover,
+		.icon-block-outer:focus,
+		.icon-block-outer:active,
+		#go-top span:hover, #go-top span:focus, #go-top span:active, .page-numbers.current,
+		.sub-title:before {
+			background-color: #e9563d		}
+
+		/*======================================*/
+		/* Primary border color */
+		/*======================================*/
+		.block-portfolio.block-grid .post-content:hover .post-content-inner, .block-portfolio.block-grid .post-content:focus .post-content-inner, .block-portfolio.block-grid .post-content:active .post-content-inner,
+		#go-top span:hover, #go-top span:focus, #go-top span:active,
+		.main-navigation ul ul, .page-numbers.current {
+			border-color: #e9563d		}
+
+		/*======================================*/
+		/* Primary text color */
+		/*======================================*/
+
+		.icon-block-outer .icon-outer span,
+		.icon-block-outer .icon-content-area .button-container .button-text,
+		.icon-block-outer .icon-content-area .button-container .button-text:before,
+		.block-testimonial .slide-item article.post-content .post-content-inner .post-title cite span  {
+			color: #e9563d		}
+
+		/*======================================*/
+		/* Secondary color */
+		/*======================================*/
+
+		/*======================================*/
+		/* Secondary background color */
+		/*======================================*/
+		.button-primary, .block-contact .contact-form-section input[type="submit"], .block-contact .kt-contact-form-area .form-group input.form-control[type="submit"], .block-grid .post-content .post-content-inner span.cat a, .block-grid .post-content .post-content-inner .button-container .post-footer-detail .post-format-outer > span a {
+			background-color: #67b930		}
+
+		/*======================================*/
+		/* Secondary border color */
+		/*======================================*/
+		.button-primary, .block-contact .contact-form-section input[type="submit"], .block-contact .kt-contact-form-area .form-group input.form-control[type="submit"] {
+			border-color: #67b930		}
+
+		/*======================================*/
+		/* Alternate color */
+		/*======================================*/
+
+		/*======================================*/
+		/* Alternate border color */
+		/*======================================*/
+		.block-portfolio.block-grid .post-content .post-content-inner {
+			border-color: #3db8db		}
+
+	</style>
+<noscript><style>.woocommerce-product-gallery{ opacity: 1 !important; }</style></noscript>
+<style id="business-consultr-custom-header-styles" type="text/css">
+		.wrap-inner-banner .page-header .page-title,
+		body.home.page .wrap-inner-banner .page-header .page-title {
+			color: #blank;
+		}
+	</style>
+<link rel="icon" href="../../../../wp-content/uploads/2020/01/cropped-logo-final-1-transparent-1-32x32.png" sizes="32x32" />
+<link rel="icon" href="../../../../wp-content/uploads/2020/01/cropped-logo-final-1-transparent-1-192x192.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="../../../../wp-content/uploads/2020/01/cropped-logo-final-1-transparent-1-180x180.png" />
+<meta name="msapplication-TileImage" content="https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/01/cropped-logo-final-1-transparent-1-270x270.png" />
+</head>
+<body class="lp_course-template-default single single-lp_course postid-835 wp-custom-logo theme-business-consultr education-consultr learnpress learnpress-page woocommerce-no-js elementor-default course-item-popup viewing-course-item viewing-course-item-12028 course-item-lp_lesson">
+<div id="site-loader">
+<div class="site-loader-inner">
+<img src="../../../../wp-content/themes/business-consultr/assets/images/placeholder/loader.gif" alt="Site Loader"> </div>
+</div>
+<div id="page" class="site">
+<a class="skip-link screen-reader-text" href="#content">
+Skip to content </a>
+<div id="offcanvas-menu">
+<div class="close-offcanvas-menu">
+<span class="kfi kfi-close"></span>
+</div>
+<div id="primary-nav-offcanvas" class="offcanvas-navigation">
+<ul id="primary-menu" class="primary-menu"><li id="menu-item-1575" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1575"><a href="../../../../registration/index.html">Register</a></li>
+<li id="menu-item-1574" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1574"><a href="../../../../login/index.html">Login</a></li>
+<li id="menu-item-109" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-109"><a href="#">My Account</a>
+<ul class="sub-menu">
+<li id="menu-item-699" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-699"><a href="../../../../password-reset/index.html">Password Reset</a></li>
+<li id="menu-item-1302" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1302"><a href="../../../../help-center/index.html">HELP CENTER</a></li>
+<li id="menu-item-698" class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-698"><a href="../../../../news/index.html">News</a></li>
+<li id="menu-item-68" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-68"><a href="../../../../sample-page/index.html">Contact Us</a></li>
+</ul>
+</li>
+<li id="menu-item-1610" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1610"><a href="../../../../help-center/index.html">Notes</a></li>
+<li id="menu-item-1609" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1609"><a href="../../../../help-center/index.html">Assignment</a></li>
+</ul> </div>
+</div> <header class="wrapper top-header">
+<div class="container">
+<div class="row">
+<div class="col-xs-12 col-sm-6 col-md-7">
+<div class="top-header-left">
+<div class="list">
+<span class="kfi kfi-pin-alt"></span>
+MCET </div>
+<div class="list">
+<span class="kfi kfi-mail-alt"></span>
+<a href="../../../../cdn-cgi/l/email-protection.html#2449454845464556474150644349454d480a474b49">
+<span class="__cf_email__" data-cfemail="6e030f020f0c0f1c0d0b1a2e09030f0702400d0103">[email&#160;protected]</span> </a>
+</div>
+<div class="list">
+<span class="kfi kfi-phone"></span>
+<a href="tel:9446485111/9495161111">
+9446485111/9495161111 </a>
+</div>
+</div>
+</div>
+<div class="col-xs-12 col-sm-6 col-md-5">
+<div class="top-header-right">
+<div class="socialgroup">
+</div>
+<span class="cart-icon">
+<a href="../../../../index.html">
+<span class="kfi kfi-cart-alt"></span>
+<span class="count">
+0 </span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<header id="masthead" class="wrapper site-header" role="banner">
+<div class="container">
+<div class="row">
+<div class="col-xs-5 col-sm-7 col-md-3">
+<div class="site-branding-outer clearfix">
+<div class="site-branding">
+<a href="../../../../index.html" class="custom-logo-link" rel="home"><img width="3822" height="1146" src="../../../../wp-content/uploads/2020/01/cropped-logo-final-1-transparent.png" class="custom-logo" alt="HippoCampus" srcset="https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/01/cropped-logo-final-1-transparent.png 3822w, https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/01/cropped-logo-final-1-transparent-300x90.png 300w, https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/01/cropped-logo-final-1-transparent-768x230.png 768w, https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/01/cropped-logo-final-1-transparent-1024x307.png 1024w, https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/01/cropped-logo-final-1-transparent-600x180.png 600w" sizes="(max-width: 3822px) 100vw, 3822px" /></a> </div>
+</div> </div>
+<div class="visible-md visible-lg col-md-9" id="primary-nav-container">
+<div class="wrap-nav main-navigation">
+<div id="navigation" class="hidden-xs hidden-sm">
+<nav id="site-navigation" class="main-navigation" role="navigation" aria-label="Primary Menu">
+<ul id="primary-menu" class="primary-menu"><li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1575"><a href="../../../../registration/index.html">Register</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1574"><a href="../../../../login/index.html">Login</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-109"><a href="#">My Account</a>
+<ul class="sub-menu">
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-699"><a href="../../../../password-reset/index.html">Password Reset</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-1302"><a href="../../../../help-center/index.html">HELP CENTER</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-698"><a href="../../../../news/index.html">News</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-68"><a href="../../../../sample-page/index.html">Contact Us</a></li>
+</ul>
+</li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1610"><a href="../../../../help-center/index.html">Notes</a></li>
+<li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1609"><a href="../../../../help-center/index.html">Assignment</a></li>
+</ul> </nav>
+</div>
+</div>
+</div>
+<div class="col-xs-7 col-sm-5 col-md-2" id="header-bottom-right-outer">
+<div class="header-bottom-right">
+<span class="alt-menu-icon visible-sm">
+<a class="offcanvas-menu-toggler" href="#">
+<span class="kfi kfi-menu"></span>
+</a>
+</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div id="content" class="wrapper site-main">
+<section class="wrapper wrap-inner-banner" style="background-image: url('../../../../wp-content/uploads/2020/01/cropped-Cover-image.png')">
+<div class="container">
+<header class="page-header">
+<div class="inner-header-content">
+<h1 class="page-title">S4 CSE</h1>
+</div>
+</header>
+</div>
+</section>
+<section class="wrapper breadcrumb-wrap">
+<div class="container">
+<nav role="navigation" aria-label="Breadcrumbs" class="breadcrumb-trail breadcrumbs" itemprop="breadcrumb"><ul class="trail-items" itemscope itemtype="http://schema.org/BreadcrumbList"><meta name="numberOfItems" content="3" /><meta name="itemListOrder" content="Ascending" /><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" class="trail-item trail-begin"><a href="../../../../index.html" rel="home" itemprop="item"><span itemprop="name">Home</span></a><meta itemprop="position" content="1" /></li><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" class="trail-item"><a href="../../../../index.html" itemprop="item"><span itemprop="name">Courses</span></a><meta itemprop="position" content="2" /></li><li itemprop="itemListElement" itemscope itemtype="http://schema.org/ListItem" class="trail-item trail-end"><span itemprop="item"><span itemprop="name">S4 CSE</span></span><meta itemprop="position" content="3" /></li></ul></nav> </div>
+</section><section class="wrapper wrap-detail-page">
+<div class="container">
+<div class="row">
+<div class="col-xs-12 col-sm-12 col-md-12">
+<article id="post-835" class="post-content post-835 lp_course type-lp_course status-publish has-post-thumbnail hentry course_category-engineering-level course">
+<div class="post-content-inner">
+<div class="post-thumbnail">
+<img width="1280" height="720" src="../../../../wp-content/uploads/2020/03/s4cse.jpg" class="attachment-business-consultr-1200-850 size-business-consultr-1200-850 wp-post-image" alt="" srcset="https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/03/s4cse.jpeg 1280w, https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/03/s4cse-300x169.jpeg 300w, https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/03/s4cse-1024x576.jpeg 1024w, https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/03/s4cse-768x432.jpeg 768w, https://hippocampus.malabarcet.ac.in/wp-content/uploads/2020/03/s4cse-600x338.jpeg 600w" sizes="(max-width: 1280px) 100vw, 1280px" /> </div>
+<div class="post-text">
+<div id="lp-single-course" class="lp-single-course">
+<nav class="learn-press-breadcrumb" itemprop="breadcrumb"><a href="../../../../index.html">Home</a>&nbsp;&#47;&nbsp;<a href="../../../../course-category/engineering-level/index.html">Engineering Level</a>&nbsp;&#47;&nbsp;S4 CSE</nav>
+<div id="learn-press-course" class="course-summary">
+<div class="course-curriculum" id="learn-press-course-curriculum">
+<div class="curriculum-scrollable">
+<ul class="curriculum-sections">
+<li class="section" id="section-cs202-computer-organisation-architecture-19" data-id="cs202-computer-organisation-architecture-19" data-section-id="19">
+<div class="section-header">
+<div class="section-left">
+<h5 class="section-title">CS202 Computer Organisation & Architecture</h5>
+</div>
+</div>
+<ul class="section-content">
+<li class="course-item course-item-lp_lesson course-item-837 item-locked">
+<a class="section-item-link" href="../asynchronous-synchronous-dram/index.html">
+<span class="item-name">Asynchronous &#038; Synchronous DRAM</span>
+<div class="course-item-meta">
+<span class="item-meta duration">05 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11477 item-locked">
+<a class="section-item-link" href="../hardware-configuration/index.html">
+<span class="item-name">Hardware Configuration</span>
+<div class="course-item-meta">
+<span class="item-meta duration">09 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11594 item-locked">
+<a class="section-item-link" href="../micro-program-sequencer/index.html">
+<span class="item-name">Micro Program Sequencer</span>
+<div class="course-item-meta">
+<span class="item-meta duration">07 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+</ul>
+</li>
+<li class="section" id="section-mathematics-60" data-id="mathematics-60" data-section-id="60">
+<div class="section-header">
+<div class="section-left">
+<h5 class="section-title">Mathematics</h5>
+</div>
+</div>
+<ul class="section-content">
+<li class="course-item course-item-lp_lesson course-item-11586 item-locked">
+ <a class="section-item-link" href="../fourier-integrals-part-1-mechatronics-cse-3/index.html">
+<span class="item-name">Fourier Integrals Part 1 -Mechatronics &#038; Cse</span>
+<div class="course-item-meta">
+<span class="item-meta duration">12 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11580 item-locked">
+<a class="section-item-link" href="../fourier-integrals-part-2-mechatronics-cse-2/index.html">
+<span class="item-name">Fourier Integrals Part 2 -Mechatronics &#038; Cse</span>
+<div class="course-item-meta">
+<span class="item-meta duration">12 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11572 item-locked">
+<a class="section-item-link" href="../fourier-integrals-part-3-mechatronics-cse-3/index.html">
+<span class="item-name">Fourier Integrals Part 3- Mechatronics &#038; Cse</span>
+<div class="course-item-meta">
+<i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11819 item-locked">
+<a class="section-item-link" href="../fourier-integrals-and-transforms-part-6-3/index.html">
+<span class="item-name">Fourier Integrals and transforms Part 6</span>
+<div class="course-item-meta">
+<span class="item-meta duration">14 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11824 item-locked">
+<a class="section-item-link" href="../fourier-integrals-and-transforms-part-5-2/index.html">
+<span class="item-name">Fourier Integrals and transforms Part 5</span>
+<div class="course-item-meta">
+<span class="item-meta duration">15 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11830 item-locked">
+<a class="section-item-link" href="../fourier-integrals-and-transforms-part-4-2/index.html">
+<span class="item-name">Fourier Integrals and transforms Part 4</span>
+<div class="course-item-meta">
+<span class="item-meta duration">10 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11836 item-locked">
+<a class="section-item-link" href="../fourier-integrals-and-transforms-part-3-2/index.html">
+<span class="item-name">Fourier Integrals and transforms Part 3</span>
+<div class="course-item-meta">
+<span class="item-meta duration">16 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11842 item-locked">
+<a class="section-item-link" href="../fourier-integrals-and-transforms-part-2-2/index.html">
+<span class="item-name">Fourier Integrals and transforms Part 2</span>
+<div class="course-item-meta">
+<span class="item-meta duration">12 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11853 item-locked">
+<a class="section-item-link" href="../module-1-4/index.html">
+<span class="item-name">Module 1</span>
+<div class="course-item-meta">
+<span class="item-meta duration">23 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-12004 item-locked">
+<a class="section-item-link" href="../part-9-fourier-integrals-and-transforms-mechatronics-cse/index.html">
+<span class="item-name">Part 9 Fourier Integrals and transforms-Mechatronics &#038; Cse</span>
+<div class="course-item-meta">
+<span class="item-meta duration">19 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-12048 item-locked">
+<a class="section-item-link" href="../fourier-integrals-and-transforms-part-6-mechatronics-cse-2/index.html">
+<span class="item-name">Fourier Integrals and transforms Part 6-Mechatronics &#038; Cse</span>
+<div class="course-item-meta">
+<span class="item-meta duration">14 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+</ul>
+</li>
+<li class="section" id="section-principles-of-database-design-61" data-id="principles-of-database-design-61" data-section-id="61">
+<div class="section-header">
+<div class="section-left">
+<h5 class="section-title">Principles Of Database Design</h5>
+</div>
+</div>
+<ul class="section-content">
+<li class="course-item course-item-lp_lesson course-item-11604 item-locked">
+<a class="section-item-link" href="../charecterizing-schedules-based-on-serializability/index.html">
+<span class="item-name">charecterizing schedules based on serializability</span>
+<div class="course-item-meta">
+<span class="item-meta duration">19 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11605 item-locked">
+<a class="section-item-link" href="../module-6/index.html">
+<span class="item-name">Module 6</span>
+<div class="course-item-meta">
+<span class="item-meta duration">18 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11807 item-locked">
+<a class="section-item-link" href="../algorithm-for-serializability/index.html">
+<span class="item-name">algorithm for serializability</span>
+<div class="course-item-meta">
+<span class="item-meta duration">16 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-11881 item-locked">
+<a class="section-item-link" href="../database-modification/index.html">
+<span class="item-name">Database Modification</span>
+<div class="course-item-meta">
+<span class="item-meta duration">14 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-12024 item-locked">
+<a class="section-item-link" href="../system-lock/index.html">
+<span class="item-name">System Lock</span>
+<div class="course-item-meta">
+<span class="item-meta duration">12 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-12026 item-locked">
+<a class="section-item-link" href="../storage-structure/index.html">
+<span class="item-name">Storage Structure</span>
+<div class="course-item-meta">
+<span class="item-meta duration">15 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+<li class="course-item course-item-lp_lesson course-item-12028 current item-locked">
+<a class="section-item-link" href="index.html">
+<span class="item-name">2 Phase Locking</span>
+<div class="course-item-meta">
+<span class="item-meta duration">12 min</span> <i class="fa item-meta course-item-status trans"></i>
+</div>
+</a>
+</li>
+</ul>
+</li> </ul>
+</div>
+</div>
+<div id="learn-press-content-item">
+<div id="course-item-content-header">
+<div class="course-item-search">
+<form>
+<input type="text" placeholder="Search item" />
+<button type="button"></button>
+</form>
+</div>
+<h2 class="course-title">
+<a href="../../index.html">S4 CSE</a>
+</h2>
+<a class="toggle-content-item" href="#"></a>
+<form class="lp-form form-button lp-button-back" method="post" action="https://hippocampus.malabarcet.ac.in/courses/s4-cse/">
+<button class="lp-button button">Back to Course</button>
+</form>
+</div>
+<div class="content-item-scrollable">
+<div class="content-item-wrap">
+<div class="learn-press-content-protected-message">
+<span class="icon"></span>
+This content is protected, please <a href="../../../../profile/index409e.html?redirect_to=https%3A%2F%2Fhippocampus.malabarcet.ac.in%2Fcourses%2Fs4-cse%2Flessons%2F2-phase-locking%2F">login</a> and enroll course to view this content!
+</div>
+<div class="course-item-nav">
+<div class="prev">
+<span>Prev</span>
+<a href="../storage-structure/index.html">
+Storage Structure </a>
+</div>
+</div>
+<div id="comments" class="comments-area">
+<div id="respond" class="comment-respond">
+<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="index.html#respond" style="display:none;">Cancel reply</a></small></h3><p class="must-log-in">You must be <a href="../../../../wp-login409e.html?redirect_to=https%3A%2F%2Fhippocampus.malabarcet.ac.in%2Fcourses%2Fs4-cse%2Flessons%2F2-phase-locking%2F">logged in</a> to post a comment.</p> </div>
+</div>
+</div>
+</div>
+<div id="course-item-content-footer">
+</div>
+</div></div>
+</div> </div>
+<footer class="post-footer">
+<div class="detail">
+
+<span class="screen-reader-text">Posted on</span>
+<span class="posted-on">
+<a href="../../../../2020/03/20/index.html" rel="bookmark">
+<time class="entry-date published" datetime="2020-03-20T10:51:41+00:00">March 20, 2020</time><time class="updated" datetime="2020-07-04T12:07:07+00:00">July 4, 2020</time> </a>
+</span>
+<span class="divider">/</span>
+<span class="comment-link">
+<a href="../../index.html#respond">
+0 </a>
+</span>
+</div>
+</footer>
+</div>
+</article> </div>
+</div>
+</div>
+</section>
+</div> 
+<footer class="wrapper site-footer" role="contentinfo">
+<div class="container">
+<div class="footer-inner">
+<div class="row">
+<div class="col-xs-12 col-sm-6 col-md-6">
+<div class="site-info">
+HippoCampus <a href="http://malabarcet.ac.in/" target="_blank">MCET</a> Copyright © All Rights Reserved. </div>
+</div>
+<div class="col-xs-12 col-sm-6 col-md-6">
+<div class="footer-menu">
+</div>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<script data-cfasync="false" src="../../../../cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript">
+		var c = document.body.className;
+		c = c.replace(/woocommerce-no-js/, 'woocommerce-js');
+		document.body.className = c;
+	</script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wpcf7 = {"apiSettings":{"root":"https:\/\/hippocampus.malabarcet.ac.in\/wp-json\/contact-form-7\/v1","namespace":"contact-form-7\/v1"}};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-content/plugins/contact-form-7/includes/js/scripts5fba.js?ver=5.2'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/creative-blocks/vendors/nicescroll/jquery.nicescroll87e3.js?ver=3.7.6'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/ditty-news-ticker/inc/static/js/jquery.touchSwipe.minff0d.js?ver=2.2.15'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/ditty-news-ticker/inc/static/js/jquery.easing330a.js?ver=1.4.1'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/ditty-news-ticker/inc/static/js/imagesloaded.pkgd.mineda1.js?ver=4.1.4'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var mtphr_dnt_vars = {"is_rtl":""};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-content/plugins/ditty-news-ticker/inc/static/js/ditty-news-ticker.mina01a.js?ver=1585583245'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/comment-reply.min7661.js?ver=5.4.2'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/woocommerce/assets/js/jquery-blockui/jquery.blockUI.min44fd.js?ver=2.70'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wc_add_to_cart_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax_url":"\/?wc-ajax=%%endpoint%%","i18n_view_cart":"View cart","cart_url":"https:\/\/hippocampus.malabarcet.ac.in\/","is_cart":"","cart_redirect_after_add":"no"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart.minb2f9.js?ver=4.3.0'></script>
+<script type='text/javascript' src='../../../../wp-content/plugins/woocommerce/assets/js/js-cookie/js.cookie.min6b25.js?ver=2.1.4'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var woocommerce_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax_url":"\/?wc-ajax=%%endpoint%%"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-content/plugins/woocommerce/assets/js/frontend/woocommerce.minb2f9.js?ver=4.3.0'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var wc_cart_fragments_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax_url":"\/?wc-ajax=%%endpoint%%","cart_hash_key":"wc_cart_hash_f1c09ab95fe2ecfcdb137ecc595c12d7","fragment_name":"wc_fragments_f1c09ab95fe2ecfcdb137ecc595c12d7","request_timeout":"5000"};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-content/plugins/woocommerce/assets/js/frontend/cart-fragments.minb2f9.js?ver=4.3.0'></script>
+<script type='text/javascript'>
+		jQuery( 'body' ).bind( 'wc_fragments_refreshed', function() {
+			var jetpackLazyImagesLoadEvent;
+			try {
+				jetpackLazyImagesLoadEvent = new Event( 'jetpack-lazy-images-load', {
+					bubbles: true,
+					cancelable: true
+				} );
+			} catch ( e ) {
+				jetpackLazyImagesLoadEvent = document.createEvent( 'Event' )
+				jetpackLazyImagesLoadEvent.initEvent( 'jetpack-lazy-images-load', true, true );
+			}
+			jQuery( 'body' ).get( 0 ).dispatchEvent( jetpackLazyImagesLoadEvent );
+		} );
+	
+</script>
+<script type='text/javascript' src='../../../../wp-content/themes/business-consultr/assets/vendors/bootstrap/js/bootstrap.min.js'></script>
+<script type='text/javascript' src='../../../../wp-content/themes/business-consultr/assets/vendors/OwlCarousel2-2.2.1/owl.carousel.min.js'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/imagesloaded.min55a0.js?ver=3.2.0'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/masonry.mind617.js?ver=3.3.2'></script>
+<script type='text/javascript'>
+/* <![CDATA[ */
+var BUSINESSCONSULTR = {"is_admin_bar_showing":"","enable_scroll_top_in_mobile":"0","home_slider":{"autoplay":false,"timeout":5000},"is_rtl":"","search_placeholder":"hit enter for search.","search_default_placeholder":"search..."};
+/* ]]> */
+</script>
+<script type='text/javascript' src='../../../../wp-content/themes/business-consultr/assets/js/main.min.js'></script>
+<script type='text/javascript' src='../../../../wp-content/themes/business-consultr/assets/js/skip-link-focus-fix.min.js'></script>
+<script type='text/javascript' src='../../../../wp-includes/js/wp-embed.min7661.js?ver=5.4.2'></script>
+</body>
+
+<!-- Mirrored from hippocampus.malabarcet.ac.in/courses/s4-cse/lessons/2-phase-locking/ by HTTrack Website Copier/3.x [XR&CO'2014], Mon, 19 Oct 2020 13:19:45 GMT -->
+</html>
